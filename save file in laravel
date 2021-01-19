@@ -1,0 +1,15 @@
+Store File 
+ 
+if ($request->hasfile('filenames')) {
+    foreach ($request->file('filenames') as $file) {
+        if($file->isValid()){
+// Media path
+            $name = 'applicant_media/';
+// disk locastion
+            $stored_file =  \Storage::disk('public')->put($name,$file);
+            $data[] = pathinfo($stored_file)['basename'];
+        }
+    }
+// return file name in array
+    return $data;
+}
