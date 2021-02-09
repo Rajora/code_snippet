@@ -1,0 +1,38 @@
+$(document).ready(function (e) {
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        $('#applicant_request_form').submit(function(e) {
+            e.preventDefault();
+            $('#application_processing_div').show();
+            $('#applicant_request_form').hide();
+            var formData = new FormData(this);
+            $.ajax({
+                type:'POST',
+                url: "route_or_url",
+                data: formData,
+                cache:false,
+                contentType: false,
+                processData: false,
+                success: (data) => {
+                    this.reset();
+                    console.log("success part");
+                    location.replace(data.redirectTo);
+                },
+                error: function(reject){
+                    if( reject.status === 422 ) {
+                        console.log(reject.responseJSON.errors);
+                        if ("email" in reject.responseJSON.errors){
+                            alert(reject.responseJSON.errors.email[0]);
+                        }
+                    }else{
+                        alert("Something went wrong contact to hr@hoderly.com");
+                    }
+                        $('#application_processing_div').hide();
+                        $('#applicant_request_form').show();
+                }
+            });
+        });
+    });
